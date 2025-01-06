@@ -6,6 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  background-color: #f2f0ef;
 }
 
 code {
@@ -13,3 +14,16 @@ code {
     monospace;
 }
 
+.graphenv {
+  position: fixed;
+  left:50%;
+  transform: translate(-50%, 0);
+  text-align: center;
+  width: 800px;
+  height: 400px;
+  //background-color: lightblue;
+  border: 2px solid darkblue;
+  padding: 10px;
+  //margin: 10px;
+}
+  
