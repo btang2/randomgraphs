@@ -5,8 +5,6 @@ import React, {useState} from 'react';
 
 
 var button = document.getElementById("generate");
-let cooldownTime= 2000;
-let isOnCooldown = false;
 
 var n = 1;
 var p = 0.00;
@@ -15,33 +13,133 @@ var p = 0.00;
 function generateGraph(n, p) {
   //actually build the graph here
   var adjlist = new Array(n);
-  for (var i = 0; i < n; i++) {
-    adjlist[i] = new Array(n);
-    for (var j = 0; j < n; j++) {
+  for (var i1 = 0; i1 < n; i1++) {
+    adjlist[i1] = new Array(n);
+    for (var j1 = 0; j1 < n; j1++) {
+      adjlist[i1][j1] = 0;
+    }
+  }
+  for (var i2 = 0; i2 < n; i2++) {
+    for (var j2 = i2; j2 < n; j2++) {
       let sample = Math.random();
       if (sample <= p) {
-        adjlist[i][j] = 1;
-      } else {
-        adjlist[i][j] = 0;
-      }
+        adjlist[i2][j2] = 1;
+        adjlist[j2][i2] = 1;
+      } 
     }
   }
   //i could use a preset library here but what's the fun in that
-  var canvas = document.getElementById("graphenv");
-  canvas.innerText = adjlist.map(row => row.join(', ')).join('\n');
+  //printing the adjacency list
+  const canvas = document.getElementById("graphenv");
+  const context = canvas.getContext('2d');
+  context.clearRect(0, 0, canvas.width, canvas.height); 
+  //canvas.innerText = adjlist.map(row => row.join(', ')).join('\n');
+
+  //assigning random coordinates to each point, ensuring no overlap or out of bounds errors
+  //so it's gonna be nx2 array (and this will likely be very inefficient)
+
+  //parameters
+  let lw = 1;
+  let alpha = 1;
+  let r = 10;
+  let nodestroke = 0.2*r;
+
+  if (n*p < 4) {
+    lw = 1;
+    alpha = 0.8;
+  } else if (n*p < 8) {
+    lw = 0.8;
+    alpha = 0.6;
+  } else if (n*p < 12) {
+    lw = 0.6;
+    alpha = 0.4;
+  } else {
+    lw = 0.4;
+    alpha = 0.2;
+  }
+
+  if (n < 10) {
+    r = 20;
+  } else if (n < 20) {
+    r = 12;
+  } else if (n < 30) {
+    r = 8;
+  } else {
+    r = 6;
+  }
+
+  const collisioncutoff = 3*r;
+  const margin = 50;
+  var nodecoord = new Array(n);
+  for (var i = 0; i < n; i++) {
+    nodecoord[i] = new Array(2);
+    var valid = false; // no overlap
+    while (!valid) {
+      valid = true;
+      //generate coords, check overlap (euclidean distance < 40)
+      let x = Math.random() * canvas.clientWidth;
+      let y = Math.random() * canvas.clientHeight;
+      if (x < margin || x > canvas.clientWidth - margin || y < margin || y > canvas.clientHeight - margin) {
+        valid = false;
+      }
+      for (var j = 0; j < i; j++) {
+        if (Math.sqrt((x - nodecoord[j][0])**2 + (y - nodecoord[j][1]) **2) < collisioncutoff) {
+          valid = false;
+        }
+      }
+      if (valid) {
+        nodecoord[i][0] = x;
+        nodecoord[i][1] = y;
+      }
+    }
+  }
+  //plot edges
+
+  for (var i3 = 0; i3 < n; i3++) {
+    for (var j3 = i3; j3 < n; j3++) {
+      if (adjlist[i3][j3] === 1) {
+        
+        
+        context.fillStyle = "rgb(80,80,80," + toString(alpha) + ")";
+        context.lineWidth = lw;
+        context.beginPath();
+        context.moveTo(nodecoord[i3][0], nodecoord[i3][1]);
+        context.lineTo(nodecoord[j3][0], nodecoord[j3][1]);
+        context.closePath();
+        context.stroke();
+      }
+    }
+  }
+  //plot each point (this may not be the most well-maintained code)
+  
+
+  for (var k = 0; k < n; k++) {
+    //drawcircle
+    context.strokeStyle = "#000000";
+    context.lineWidth = nodestroke;
+    context.fillStyle = "#a2bffe";
+    context.beginPath();
+    context.arc(nodecoord[k][0], nodecoord[k][1], r, 0, 2 * Math.PI);
+    context.stroke();
+    context.fill();
+  }
+  //canvas.innerText = nodecoord.map(row => row.join(', ')).join('\n');
+
 
 }
 
-
+var cooldownTime = 2000;
+var isOnCooldown = false;
 
 button.addEventListener("click", () => {
+  
   if (!isOnCooldown) {
     //now i just need to write a function for it and add environment
-    alert("generating your graph (n=" + n + ", p=" + p + ")"); 
+    //alert("generating your graph (n=" + n + ", p=" + p + ")"); 
     generateGraph(n, p);
     isOnCooldown = true;
     button.disabled = true;
-    setTimeout(() => {
+    setTimeout((cooldownTime) => {
       isOnCooldown = false;
       button.disabled = false;
     }, cooldownTime);
@@ -50,7 +148,7 @@ button.addEventListener("click", () => {
 
 function NRangeSlider() {
   let [value, setValue] = useState(1); 
-  const MAX = 99; 
+  const MAX = 50; 
   const getBackgroundSize = () => { 
   return { backgroundSize: `${((value-1) * 100) / MAX}% 100%` }; }; 
   const getValue = () => {
