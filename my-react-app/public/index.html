@@ -24,13 +24,15 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    
     <title>btang2/RandomGraphs</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="title" style="padding:10px;">
-      <h1>Create a Random Graph</h1>
-      <p>adjust the slider to change parameters</p>
+      <h1>Create a Random (n,p) Graph</h1>
+      <p>n = number of nodes, while p = probability edge exists between two nodes.</p>
+      <p>note that the expected number of edges for a given (n,p) graph is 1/2*n*(n-1)*p.</p>
       <button id ="generate">generate a random graph</button>
     </div>
     <div id="root"></div>
