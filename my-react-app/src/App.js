@@ -159,20 +159,20 @@ function handleMouseMove(e) {
 
 // listen for mouse events
 
-document.addEventListener('mousemove', (e) => {
+canvas.addEventListener('mousemove', (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
   handleMouseMove(e);
   //still bugged
-  context.clearRect(20,80,200,60);
-  context.fillText("MouseX: " + mouseX, 30, 100);
-  context.fillText("MouseY: " + mouseY, 30, 120);
+  //context.clearRect(20,80,200,60);
+  //context.fillText("MouseX: " + mouseX, 30, 100);
+  //context.fillText("MouseY: " + mouseY, 30, 120);
  // document.getElementById('coordinates').textContent = `X: ${x}, Y: ${y}`;
 });
 
-document.addEventListener('mousedown', (e) => {handleMouseDown(e);});
-document.addEventListener('mouseup', (e) => {handleMouseUp(e);});
-document.addEventListener('mouseout', (e) => {handleMouseOut(e);});
+canvas.addEventListener('mousedown', (e) => {handleMouseDown(e);});
+canvas.addEventListener('mouseup', (e) => {handleMouseUp(e);});
+canvas.addEventListener('mouseout', (e) => {handleMouseOut(e);});
 
 
 function generateGraph(n, p) {
